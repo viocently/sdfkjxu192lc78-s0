@@ -13,4 +13,8 @@ The header file "framework.h" gives the concrete implementation of the MITM fram
 The cpp file "SuperpolyBGL.cpp" configures parameters for different ciphers and then calls the MITM framework to recover the superpoly.
 
 ## 2. Usage of the codes
-The codes are 
+We give a brief introduction on how to run our code on a linux platform.
+
+1. Install Gurobi and configure the required environment variables such as "GUROBI_HOME" and "LD_LIBRARY_PATH".
+
+2. Open the file "SuperpolyBGL.cpp" to set the *cipher_name*, *cube_index* and *rounds*. For example, if you want to recover the superpoly of $\{0,1,\ldots, 95\} \backslash$
