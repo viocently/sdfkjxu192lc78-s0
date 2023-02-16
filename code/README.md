@@ -15,7 +15,7 @@ The cpp file "SuperpolyBGL.cpp" configures parameters for different ciphers and 
 ## 2. Usage of the codes
 We give a brief introduction on how to run our code on a linux platform.
 
-1. Install Gurobi and configure the required environment variables such as "GUROBI_HOME" and "LD_LIBRARY_PATH".
+1. Install Gurobi (our version is 9.5.1) and configure the required environment variables such as "GUROBI_HOME" and "LD_LIBRARY_PATH".
 
 2. Open the file "SuperpolyBGL.cpp" to set the *cipher_name*, *cube_index* and *rounds*. 
 We provides two options for outputting the superpoly via the variable *solver_mode*. 
