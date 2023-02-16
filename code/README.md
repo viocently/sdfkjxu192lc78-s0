@@ -22,7 +22,7 @@ We provides two options for outputting the superpoly via the variable *solver_mo
 
 Setting *solver_mode* to "mode::OUTPUT_FILE" means only the necessary information for superpoly recovery is recorded, so that we can calculate the concrete expression of the superpoly from the "TERM" and "STATE" folders after the program terminates. This mode can reduce the memory usage during the running of the program.
 
-Setting *solver_mode* to "mode::OUTPUT_EXP" means once the MITM framework finishes, the concrete expression of the superpoly will be output to the folder "TERM" as a file 
+Setting *solver_mode* to "mode::OUTPUT_EXP" means once the MITM framework finishes, the concrete expression of the superpoly will be output to the folder "TERM" as a file named "superpoly.txt". 
 
 3. Type `sh exec.sh` in the console, this should create three folders named "STATE", "LOG" and "TERM", and generate an executable program "mitm". "LOG" contains log files; "STATE" stores the hash table $P$ after each expansion; "TERM" 
 stores the information of the superpoly that has been extracted by the CMP-based approach.
