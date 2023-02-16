@@ -17,4 +17,4 @@ We give a brief introduction on how to run our code on a linux platform.
 
 1. Install Gurobi and configure the required environment variables such as "GUROBI_HOME" and "LD_LIBRARY_PATH".
 
-2. Open the file "SuperpolyBGL.cpp" to set the *cipher_name*, *cube_index* and *rounds*. For example, if you want to recover the superpoly of $\{0,1,\ldots, 95\} \backslash$
+2. Open the file "SuperpolyBGL.cpp" to set the *cipher_name*, *cube_index* and *rounds*. For example, if you want to recover the superpoly of ${0,1,\ldots, 95} \backslash$
