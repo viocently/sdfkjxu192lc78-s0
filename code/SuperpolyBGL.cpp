@@ -35,6 +35,7 @@ int main()
 
 	if (cipher_name == "trivium")
 	{
+		
 		cube_index = { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 13, 15, 17, 19, 21,
 24, 26, 28, 30, 32, 34, 36, 39, 41, 43, 45, 47, 49, 51,
 54, 56, 58, 60, 62, 64, 66, 69, 71, 73, 75, 77, 79 };
@@ -98,18 +99,14 @@ int main()
 	framework MITM_framework(rounds, r0, r1, first_expand_step, N, fbound, cbound0, cbound1, single_threads,
 		solver_mode, threadpool, *p_target_cipher, cube_index, min_gap);
 
-	//MITM_framework.compare_cube(8);
+	// MITM_framework.compare_cube(8);
 
 	MITM_framework.start();
 
 	MITM_framework.stop();
 
+	// MITM_framework.read_sols_and_output();
 	
-	
-	
-	
-
-	delete p_target_cipher;
 	
 	
 }

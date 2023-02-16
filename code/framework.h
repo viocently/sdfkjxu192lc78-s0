@@ -6,6 +6,7 @@
 #include "thread_pool.h"
 #include "deg.h"
 #include "log.h"
+#include "file_reader.h"
 
 using namespace thread_pool;
 enum class mode { OUTPUT_FILE, OUTPUT_EXP, NO_OUTPUT };
@@ -13,6 +14,7 @@ mutex solver_mutex0;
 mutex solver_mutex1;
 mutex expander_mutex0;
 mutex expander_mutex1;
+mutex reader_mutex;
 
 #define REF(x) std::ref(x)
 
@@ -1719,6 +1721,235 @@ public:
 		for (auto& it : futures)
 			it.get();
 
+	}
+
+	void read_P(const string filepath, const FileReader& reader, map<node_pair, BooleanPolynomial> & new_P)
+	{
+		fstream fs;
+		fs.open(filepath);
+		while (1)
+		{
+			node_pair state_pair;
+			BooleanPolynomial coef;
+			auto not_EOF = reader.read_one_pair(fs, state_pair, coef);
+			if (not_EOF)
+			{
+				new_P[state_pair] = coef;
+			}
+			else
+			{
+				break;
+			}
+		}
+		fs.close();
+	}
+
+
+
+	// read sols from TERM and STATE
+	void read_sols_thread(const string filepath,  const FileReader & reader, int start, int end, 
+		map<node_pair, BooleanPolynomial> & cur_P, map<BooleanMonomial, int> & sup_counter, int &max_d)
+	{
+
+		auto start_flags = all_rounds_flags[start][0];
+
+		fstream fs;
+		fs.open(filepath);
+		while (1)
+		{
+			dynamic_bitset<> start_state, end_state;
+			vector<dynamic_bitset<>> p_sols;
+			vector<BooleanPolynomial> p_exps;
+			vector<pair<int, int>> p_rms;
+			set<int> end_constants;
+
+			auto not_EOF = reader.read_one_sol(fs, start_state, end_state, p_sols, p_exps, p_rms, end_constants);
+
+			if (!not_EOF)
+				break;
+
+
+			vector<Flag> middle_start_flags(start_flags);
+			for (int i = 0; i < target_cipher.statesize; i++)
+				if (start_flags[i] == "delta" && start_state[i] == 0)
+					middle_start_flags[i] = "zero_c";
+
+			vector<vector<vector<Flag>>> middle_rounds_flags;
+			target_cipher.calculate_flags(start, end, middle_start_flags, middle_rounds_flags, true, target_cipher.updatelist);
+
+
+			auto cur_coef = cur_P[pair(start_state, end_state)];
+
+
+			bool has_sols = (p_sols.size() > 0);
+			if (!has_sols)
+				return;
+
+
+
+			bool has_constant = (end_constants.size() > 0);
+			int p_num = p_sols[0].size();
+			dynamic_bitset<> p_sol_mask(p_num);
+			for (auto& p_sol : p_sols)
+				p_sol_mask |= p_sol;
+
+			int maxr = 0;
+			if (has_constant)
+				maxr = end - start;
+			else
+			{
+				for (int i = p_num - 1; i >= 0; i--)
+				{
+					if (p_sol_mask[i] == 1)
+					{
+						maxr = p_rms[i].first;
+						break;
+					}
+				}
+			}
+
+			BooleanPolynomial second_expand_res;
+			{
+				vector<BooleanPolynomial> subexps;
+				{
+					BooleanPolynomial first_expand_res;
+					{
+						auto middle_rounds_exps = target_cipher.generate_exps(start, start + maxr + 1, middle_start_flags, normal_exp, target_cipher.updatelist);
+						first_expand_res = expand_cof(start, end, p_sols, p_exps, p_rms, start, middle_rounds_exps);
+						if (has_constant)
+						{
+							auto end_constants_expand = target_cipher.default_constant_1;
+							for (auto& i : end_constants)
+							{
+								end_constants_expand *= middle_rounds_exps[maxr][0][i];
+							}
+							first_expand_res *= end_constants_expand;
+						}
+					}
+
+					for (auto& mon : first_expand_res)
+					{
+						auto subexp = mon.subs(all_rounds_exps[start][0]);
+						if (!subexp.iszero())
+							subexps.emplace_back(subexp);
+					}
+				}
+
+				second_expand_res = fastsum(target_cipher.statesize, subexps);
+			}
+
+
+			auto contr = second_expand_res * cur_coef;
+			
+			lock_guard<mutex> guard(reader_mutex);
+			for (auto& mon : contr)
+			{
+				sup_counter[mon]++;
+				if (mon.count() > max_d)
+					max_d = mon.count();
+			}
+			
+			// cout << "Read one sol complete." << endl;
+		}
+
+
+		fs.close();
+
+		cout << "Read sol file complete: " << filepath << endl;
+	}
+
+
+	void read_sols(string TERM_path, string STATE_path, const FileReader& reader, map<BooleanMonomial, int> & sup_counter, int & max_d)
+	{
+		// first sort the files 
+		using round_pair = pair<int, int>;
+
+		vector<filesystem::path> P_files;
+		reader.getJustCurrentFilePaths(STATE_path, P_files);
+		vector<filesystem::path> sol_files;
+		reader.getJustCurrentFilePaths(TERM_path, sol_files);
+
+		map<round_pair, string> sort_P_files;
+		map<round_pair, vector<string>> sort_sol_files;
+		for (auto& P_file : P_files)
+		{
+			auto P_filename = P_file.filename().string();
+			cout << "Detect P_file: " << P_filename << endl;
+			smatch P_filename_sm;
+			auto match_status = regex_match(P_filename, P_filename_sm, P_filename_regex);
+			if (match_status)
+			{
+				int start = stoi(P_filename_sm[1]);
+				int end = stoi(P_filename_sm[2]);
+				sort_P_files[pair(start, end)] = P_file.string();
+			}
+		}
+
+		for (auto& sol_file : sol_files)
+		{
+			auto sol_filename = sol_file.filename().string();
+			cout << "Detect sol_file: " << sol_filename << endl;
+			smatch sol_filename_sm;
+			auto match_status = regex_match(sol_filename, sol_filename_sm, sol_filename_regex);
+			if (match_status)
+			{
+				int start = stoi(sol_filename_sm[1]);
+				int end = stoi(sol_filename_sm[2]);
+				sort_sol_files[pair(start, end)].emplace_back(sol_file.string() );
+			}
+		}
+
+
+		for (auto& rr_filepath : sort_P_files)
+		{
+			auto& rr = rr_filepath.first;
+			auto& p_filepath = rr_filepath.second;
+
+			map<node_pair, BooleanPolynomial> new_P;
+			read_P(p_filepath, reader, new_P);
+			cout << "Read P file complete: " << p_filepath << endl;
+
+			vector<future<void>> futures;
+			for (auto& sol_file : sort_sol_files[rr])
+			{
+				futures.emplace_back(threadpool.Submit(&framework::read_sols_thread, REF(*this), sol_file, REF(reader), rr.first, rr.second, REF(new_P), REF(sup_counter), REF(max_d)));
+			}
+
+			for (auto& it : futures)
+				it.get();
+		}
+	}
+
+	void read_sols_and_output()
+	{
+		if (solver_mode == mode::OUTPUT_FILE)
+		{
+			string TERM_path = R"~(./TERM)~";
+			string STATE_path = R"~(./STATE)~";
+			map<BooleanMonomial, int> sup_counter;
+			int max_d = 0;
+			FileReader reader;
+
+			read_sols(TERM_path, STATE_path, reader, sup_counter, max_d);
+
+
+			cout << "The upper bound of superpoly: " << max_d << endl;
+			vector<BooleanMonomial> sort_sup;
+			for (auto& mon_cnt : sup_counter)
+				if (mon_cnt.second % 2)
+					sort_sup.emplace_back(mon_cnt.first);
+
+			cout << "The number of monomials appearing in the superpoly: " << sort_sup.size() << endl;
+
+			cout << "Output superpoly to file." << endl;
+			string path = string("TERM/") + string("superpoly.txt");
+			ofstream os;
+			os.open(path, ios::out);
+			for (auto& mon : sort_sup)
+				os << mon << endl;
+			os.close();
+			cout << "Output superpoly to file finished." << endl;
+		}
 	}
 };
 
