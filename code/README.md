@@ -19,4 +19,5 @@ We give a brief introduction on how to run our code on a linux platform.
 
 2. Open the file "SuperpolyBGL.cpp" to set the *cipher_name*, *cube_index* and *rounds*. 
 
-3. 
+3. Type `sh exec.sh` in the console, this should create three folders named "STATE", "LOG" and "TERM", and generate an executable program "mitm". "LOG" contains log files; "STATE" stores the hash table $P$ after each expansion; "TERM" 
+stores the information of the superpoly that has been extracted by the CMP-based approach.
