@@ -107,7 +107,7 @@ int main()
 
 	// MITM_framework.read_sols_and_output();
 	
-	
+	delete p_target_cipher;
 	
 }
 
