@@ -30,3 +30,6 @@ We provides two options for outputting the superpoly via the variable *solver_mo
 stores the information of the superpoly that has been extracted by the CMP-based approach.
 
 4. Type `./mitm` in the console to start the superpoly recovery. While the program is running, the status of the program will be recorded in the log files.
+
+## 3. Dependencies
+Note that the header file "dynamic_bitset.hpp" included in the codes is from Boost C++ Libraires, which can be downloaded from (https://www.boost.org/).
