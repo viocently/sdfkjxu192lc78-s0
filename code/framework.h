@@ -1920,6 +1920,7 @@ public:
 		}
 	}
 
+	// read solutions from files and output the final superpoly to the folder "TERM"
 	void read_sols_and_output()
 	{
 		if (solver_mode == mode::OUTPUT_FILE)
