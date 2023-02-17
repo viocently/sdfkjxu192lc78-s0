@@ -31,5 +31,5 @@ stores the information of the superpoly that has been extracted by the CMP-based
 
 4. Type `./mitm` in the console to start the superpoly recovery. While the program is running, the status of the program will be recorded in the log files.
 
-## 3. Dependencies
+## 3. Dependencies of the codes
 Note that the header file "dynamic_bitset.hpp" used in the codes is from the C++ Boost Library, which can be downloaded from (https://www.boost.org/).
