@@ -10,6 +10,8 @@
 
 using namespace thread_pool;
 enum class mode { OUTPUT_FILE, OUTPUT_EXP, NO_OUTPUT };
+
+
 mutex solver_mutex0;
 mutex solver_mutex1;
 mutex expander_mutex0;

@@ -11,11 +11,7 @@
 #include "flag.h"
 #include "cipher.h"
 
-
-
 using namespace std;
-
-
 
 int main()
 {
