@@ -1,10 +1,12 @@
-# Reference codes for the paper "Revisiting Core Monomial Prediction: Graph-Based MITM Framework for Superpoly Recovery"
+# Reference codes for the paper "Massive Superpoly Recovery with a Meet-in-the-middle Framework -- Improved Cube Attacks on Trivium and Kreyvium"
 
 ## 1. Structure of the codes
 
 The header file "BooleanPolynomial.h" defines the class for the representation and operations of Boolean polynomials
 
 The header file "flag.h" defines the class for the representation and operations of flags.
+
+The header file "listsOfPolynomials" defines the class for computing the contributions of core monomial trails.
 
 The header file "cipher.h" defines the update functions for different ciphers and gives the concrete implementation of our CMP-based approach.
 
