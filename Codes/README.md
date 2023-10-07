@@ -28,8 +28,7 @@ We provides two options for outputting the superpoly via the variable *solver_mo
 
    Regardless of what *solver_mode* is set to, some information about the superpoly (such as the algebraic degree, the number of monomials appearing in the superpoly, etc.) will end up being output in the standard output.
 
-4. Type `sh exec.sh` in the console, this should create three folders named "STATE", "LOG" and "TERM", and generate an executable program "mitm". "LOG" contains log files; "STATE" stores the hash table $P$ after each expansion; "TERM" 
-stores the information of the superpoly that has been extracted by the CMP-based approach.
+4. Create three folders named "STATE", "LOG" and "TERM" and type `sh exec.sh` in the console. This should generate an executable program "mitm". "LOG" contains log files; "STATE" stores the hash table $P$ after each expansion; "TERM" stores the information of the superpoly that has been extracted by the CMP-based approach.
 
 5. Type `./mitm` in the console to start the superpoly recovery. While the program is running, the status of the program will be recorded in the log files.
 
