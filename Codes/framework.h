@@ -2060,7 +2060,7 @@ public:
 	{
 
 		// we only use single thread
-		if (solver_mode == mode::OUTPUT_FILE)
+		if (solver_mode == mode::OUTPUT_FILE || solver_mode == mode::OUTPUT_EXP)
 		{
 			map<BooleanMonomial, int> sup_counter;
 			fstream fs;
