@@ -1,1 +1,2 @@
-This is the source code for the paper "Revisiting Core Monomial Prediction: Graph-Based MITM Framework for Superpoly Recovery".
+This is the source code for the paper "Massive Superpoly Recovery with a
+Meet-in-the-middle Framework Improved Cube Attacks on Trivium and Kreyvium".
