@@ -178,18 +178,25 @@ int main()
 	MITM_framework.stop();
 
 	
-	// if you want the exact superpoly, then set this variable to true; otherwise set it to false. We recommend true for kreyvium, but false for trivium and grain, otherwise you may encounter an out of memory (OOM) issue. 
-	bool isAccurate = true; 
 	
-	if (isAccurate)
+	if (solver_mode == mode::OUTPUT_FILE)
 	{
-		MITM_framework.read_sols_and_output(true);
-		MITM_framework.analyze_superpoly();
+		// if you want the exact superpoly, then set this variable to true; otherwise set it to false. We recommend true for kreyvium, but false for trivium and grain, otherwise you may encounter an out of memory (OOM) issue. 
+		bool isAccurate = true;
+
+		if (isAccurate)
+		{
+			MITM_framework.read_sols_and_output(true);
+		}
+		else
+		{
+			MITM_framework.read_sols_and_output(false);
+			MITM_framework.analyze_superpoly_asLists();
+		}
 	}
-	else
+	else if(solver_mode == mode::OUTPUT_EXP)
 	{
-		MITM_framework.read_sols_and_output(false);
-		MITM_framework.analyze_superpoly_asLists();
+		MITM_framework.analyze_superpoly();
 	}
 
 
