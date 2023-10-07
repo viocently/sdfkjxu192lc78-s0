@@ -28,11 +28,13 @@ We provides two options for outputting the superpoly via the variable *solver_mo
 
    Regardless of what *solver_mode* is set to, some information about the superpoly (such as the algebraic degree, the number of monomials appearing in the superpoly, etc.) will end up being output in the standard output.
 
-Tips: due to the special memory usage structure of the linux system, if you encounter an out of the memory (OOM) problem when running the program, you can adjust the environment variable *GLIBC_TUNABLES=glibc.malloc.arena_max* in the file "exec.sh". The smaller the value of this variable, the lower the memory consumption, but with some loss of speed.
 
 3. Create three folders named "STATE", "LOG" and "TERM" and type `sh exec.sh` in the console. This should generate an executable program "mitm". "LOG" contains log files; "STATE" stores the hash table $P$ after each expansion; "TERM" stores the information of the superpoly that has been extracted by the CMP-based approach.
 
 4. Type `./mitm` in the console to start the superpoly recovery. While the program is running, the status of the program will be recorded in the log files.
+
+
+Tips: due to the special memory usage structure of the linux system, if you encounter an out of the memory (OOM) problem when running the program, you can adjust the environment variable *GLIBC_TUNABLES=glibc.malloc.arena_max* in the file "exec.sh". The smaller the value of this variable, the lower the memory consumption, but with some loss of speed.
 
 ## 3. Dependencies
 Note that the header file "dynamic_bitset.hpp" used in the codes is from the C++ Boost Library, which can be downloaded from (https://www.boost.org/).
